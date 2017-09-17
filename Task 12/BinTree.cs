@@ -28,60 +28,46 @@ namespace Task_12
             return data + " ";
         }
 
-        //формирование элемента дерева
-        public static BinTree MakeBinTree(int d)
+        public static int[] FindTree(int[] arr, out int compare, out int forw)
         {
-            BinTree p = new BinTree(d);
-            return p;
-        }
-
-        //добавление элемента d в дерево поиска
-        public static BinTree Add(BinTree tree, int d)
-        {
-            BinTree p = tree;//корень дерева
-            BinTree r = null;
-
-            bool ok = false;
-            if (tree.data == ' ') tree.data = d;
-            else
-            {
-                while (p != null && !ok)
-                {
-                    r = p;
-                    if (d < p.data) p = p.left;//пойти в левое поддерево
-                    else p = p.right; //пойти в правое поддерево
-                }
-                //создаем узел
-                BinTree NewTree = MakeBinTree(d);//выделили память
-
-                // если d<r->key, то добавляем его в левое поддерево
-                if (d < r.data) r.left = NewTree;
-                // если d>r->key, то добавляем его в правое поддерево
-                else r.right = NewTree;
-            }
-            return tree;
-        }
-        public static BinTree FindTree(int[] arr)
-        {
+            compare = 0;
+            forw = 0;
             BinTree tree = new BinTree(arr[0]);
             for (int i = 1; i < arr.Length; i++)
             {
-                Add(tree, arr[i]);
+                BinTree p = tree;//корень дерева
+                BinTree r = null;
+
+                while (p != null)
+                {
+                    r = p;
+                    compare++;
+                    if (arr[i] < p.data) p = p.left;        //пойти в левое поддерево
+                    else p = p.right;                       //пойти в правое поддерево
+                }
+
+                compare++;
+                // если d<r->key, то добавляем его в левое поддерево
+                if (arr[i] < r.data) r.left = new BinTree(arr[i]);
+
+                // если d>r->key, то добавляем его в правое поддерево
+                else r.right = new BinTree(arr[i]);
             }
-            return tree;
+
+            int index = 0;
+            ShowTree(tree, ref arr, ref index, ref compare, ref forw);
+            return arr;
         }
 
-        //печать дерева по уровням
-        public static void ShowTree(BinTree p, int l, ref int[] mas, ref int index)
+        public static void ShowTree(BinTree p, ref int[] mas, ref int index, ref int compare, ref int forw)
         {
             if (p != null)
             {
-                BinTree.ShowTree(p.left, l + 3, ref mas, ref index);//переход к левому поддереву
-                for (int i = 0; i < l; i++) Console.Write(" ");
-                Console.WriteLine(p.data);
+                BinTree.ShowTree(p.left, ref mas, ref index, ref compare, ref forw);//переход к левому поддереву
+                forw++;
                 mas[index] = p.data;
                 index++;
-                BinTree.ShowTree(p.right, l + 3, ref mas, ref index);//переход к правому поддереву
+                BinTree.ShowTree(p.right, ref mas, ref index, ref compare, ref forw);//переход к правому поддереву
             }
         }
 
